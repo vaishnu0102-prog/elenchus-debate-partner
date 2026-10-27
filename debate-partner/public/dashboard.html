@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Debate Partner — Dashboard</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div id="topbar"></div>
+    <div id="content"><div class="loader">Loading…</div></div>
+  </main>
+</div>
+<template id="dashboardTemplate">
+  <div class="welcome-card glass">
+    <div>
+      <h1>Welcome back, <span id="welcomeName">Debater</span>! 👋</h1>
+      <p>Ready for your next debate? Your AI opponent is warmed up and waiting.</p>
+    </div>
+    <a class="btn btn-primary" id="startDebateBtn" href="new.html">+ Start New Debate</a>
+  </div>
+
+  <div id="activeDebates"></div>
+
+  <div class="grid stats-grid">
+    <div class="stat-card glass">
+      <div class="stat-icon" style="background:linear-gradient(135deg,var(--accent-purple),var(--accent-blue));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/></svg>
+      </div>
+      <div class="stat-value" id="statDebates">—</div>
+      <div class="stat-label">Debates Completed</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon" style="background:linear-gradient(135deg,var(--success),var(--accent-cyan));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M6 3h12v4a6 6 0 01-12 0V3z"/></svg>
+      </div>
+      <div class="stat-value" id="statWinRate">—</div>
+      <div class="stat-label">Win Rate</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon" style="background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <div class="stat-value" id="statAiScore">—</div>
+      <div class="stat-label">AI Score</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-icon" style="background:linear-gradient(135deg,var(--accent-pink),var(--accent-purple));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>
+      </div>
+      <div class="stat-value" id="statHours">—</div>
+      <div class="stat-label">Practice Hours</div>
+    </div>
+  </div>
+
+  <div class="grid content-grid">
+    <div>
+      <div class="panel glass">
+        <div class="panel-head">
+          <h2>Performance Analytics</h2>
+        </div>
+        <div id="perfWrap"><canvas id="perfChart" height="130"></canvas></div>
+      </div>
+
+      <div class="panel glass">
+        <div class="panel-head">
+          <h2>Recent Debates</h2>
+          <a class="btn btn-ghost" href="history.html">View All</a>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Topic</th><th>Result</th><th>Score</th><th>Date</th></tr>
+          </thead>
+          <tbody id="debatesTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel glass">
+        <div class="panel-head"><h2>Trending Debate Topics</h2></div>
+        <div class="grid topics-grid" id="topicsGrid"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel glass">
+        <div class="panel-head"><h2>AI Feedback</h2></div>
+        <div class="feedback-block strengths">
+          <h3>Strengths</h3>
+          <ul id="strengthsList"></ul>
+        </div>
+        <div class="feedback-block weaknesses">
+          <h3>Areas to Improve</h3>
+          <ul id="weaknessesList"></ul>
+        </div>
+        <div class="feedback-block" id="confidenceBlock">
+          <h3>Confidence Score</h3>
+          <div class="confidence-wrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border-soft)" stroke-width="6"/>
+              <circle id="confidenceRing" cx="26" cy="26" r="22" fill="none" stroke="url(#gc)" stroke-width="6" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+              <defs><linearGradient id="gc" x1="0" y1="0" x2="52" y2="52"><stop offset="0" stop-color="#4CE0D2"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+            </svg>
+            <div class="confidence-num" id="confidenceNum">—%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel glass profile-card">
+        <div class="progress-ring-wrap">
+          <svg width="110" height="110" viewBox="0 0 110 110">
+            <circle cx="55" cy="55" r="46" fill="none" stroke="var(--border-soft)" stroke-width="9"/>
+            <circle id="profileRing" cx="55" cy="55" r="46" fill="none" stroke="url(#gp)" stroke-width="9" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+            <defs><linearGradient id="gp" x1="0" y1="0" x2="110" y2="110"><stop offset="0" stop-color="#4CE0D2"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+          </svg>
+          <div class="progress-center">
+            <div class="num" id="profilePct">—%</div>
+            <div class="lbl">Level Progress</div>
+          </div>
+        </div>
+        <div class="avatar-circle" style="width:54px;height:54px;font-size:1.1rem;margin:0 auto 10px;" id="profileInitials">—</div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-email" id="profileEmail">—</div>
+        <div class="badges" id="badgesList"></div>
+      </div>
+    </div>
+  </div>
+</template>
+<script src="js/app.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
