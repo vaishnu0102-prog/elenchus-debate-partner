@@ -37,8 +37,11 @@ app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.ht
 app.use(errorHandler);
 
 async function start() {
-  await migrate();
-  await seed();
+  if (!config.isProd) {
+    await migrate();
+    await seed();
+  }
+
   const server = app.listen(config.port, () => {
     console.log(`\n  Debate Partner running -> http://localhost:${config.port}`);
     console.log(`  AI provider: ${config.llm.provider} (${config.llm.model})${config.llm.provider === "mock" ? "  <-- OFFLINE DEMO AI: set ANTHROPIC_API_KEY or OPENAI_API_KEY in .env for real debates" : ""}`);

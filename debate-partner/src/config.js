@@ -7,9 +7,9 @@ function pickProvider() {
   const p = (env.LLM_PROVIDER || "").toLowerCase();
 
   if (p) return p;
-  if (env.ANTHROPIC_API_KEY) return "anthropic";
-  if (env.OPENAI_API_KEY) return "openai";
-
+  if (env.GEMINI_API_KEY) return "gemini";
+if (env.ANTHROPIC_API_KEY) return "anthropic";
+if (env.OPENAI_API_KEY) return "openai";
   return "mock";
 }
 
@@ -17,6 +17,7 @@ const provider = pickProvider();
 
 const defaultModels = {
   anthropic: "claude-sonnet-5-5",
+  gemini: "gemini-2.5-flash",
   openai: "gpt-4o-mini",
   ollama: "llama3.2:1b",
   mock: "mock-debater-1"
@@ -29,7 +30,10 @@ module.exports = {
     ? Number(env.PORT)
     : 3000,
 
-  databaseUrl: env.DATABASE_URL || "postgres://dp:dp@localhost:5432/debatex",
+  databaseUrl: env.DATABASE_URL ||
+  (isProd
+    ? (() => { throw new Error("DATABASE_URL is required in production"); })()
+    : "postgres://dp:dp@localhost:5432/debatex"),
 
   sessionDays: Number(env.SESSION_DAYS) || 7,
   rememberDays: Number(env.REMEMBER_DAYS) || 30,
@@ -43,11 +47,13 @@ module.exports = {
 
     model: env.LLM_MODEL || defaultModels[provider] || "unknown",
 
-    apiKey: provider === "anthropic"
-      ? env.ANTHROPIC_API_KEY
-      : provider === "openai"
-        ? env.OPENAI_API_KEY
-        : undefined,
+    apiKey: provider === "gemini"
+  ? env.GEMINI_API_KEY
+  : provider === "anthropic"
+    ? env.ANTHROPIC_API_KEY
+    : provider === "openai"
+      ? env.OPENAI_API_KEY
+      : undefined,
 
     baseUrl: env.LLM_BASE_URL ||
       (provider === "openai"
