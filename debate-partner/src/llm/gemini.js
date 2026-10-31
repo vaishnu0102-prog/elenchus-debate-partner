@@ -1,6 +1,6 @@
 
 module.exports = function createGeminiProvider(config) {
-  const model = config.model || "gemini-2.5-flash";
+  const model = config.model || "gemini-3.8-flash";
   const apiKey = config.apiKey;
   const timeoutMs = config.timeoutMs || 90000;
 

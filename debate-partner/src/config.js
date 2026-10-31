@@ -17,7 +17,7 @@ const provider = pickProvider();
 
 const defaultModels = {
   anthropic: "claude-sonnet-5-5",
-  gemini: "gemini-2.5-flash",
+  gemini: "gemini-3.8-flash",
   openai: "gpt-4o-mini",
   ollama: "llama3.2:1b",
   mock: "mock-debater-1"
