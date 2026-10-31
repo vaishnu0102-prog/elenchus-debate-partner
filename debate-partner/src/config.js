@@ -7,6 +7,7 @@ function pickProvider() {
   const p = (env.LLM_PROVIDER || "").toLowerCase();
 
   if (p) return p;
+  if (env.GROQ_API_KEY) return "groq";
   if (env.GEMINI_API_KEY) return "gemini";
 if (env.ANTHROPIC_API_KEY) return "anthropic";
 if (env.OPENAI_API_KEY) return "openai";
@@ -16,6 +17,7 @@ if (env.OPENAI_API_KEY) return "openai";
 const provider = pickProvider();
 
 const defaultModels = {
+  groq: "openai/gpt-oss-20b",
   anthropic: "claude-sonnet-5-5",
   gemini: "gemini-3.8-flash",
   openai: "gpt-4o-mini",
@@ -47,13 +49,15 @@ module.exports = {
 
     model: env.LLM_MODEL || defaultModels[provider] || "unknown",
 
-    apiKey: provider === "gemini"
-  ? env.GEMINI_API_KEY
-  : provider === "anthropic"
-    ? env.ANTHROPIC_API_KEY
-    : provider === "openai"
-      ? env.OPENAI_API_KEY
-      : undefined,
+    apiKey: provider === "groq"
+  ? env.GROQ_API_KEY
+  : provider === "gemini"
+    ? env.GEMINI_API_KEY
+    : provider === "anthropic"
+      ? env.ANTHROPIC_API_KEY
+      : provider === "openai"
+        ? env.OPENAI_API_KEY
+        : undefined,
 
     baseUrl: env.LLM_BASE_URL ||
       (provider === "openai"

@@ -11,6 +11,15 @@ function getProvider() {
   if (c.provider === "ollama") {
     cached = require("./ollama")(c);
 
+  } else if (c.provider === "groq") {
+    if (!c.apiKey) {
+      throw new Error(
+        "LLM_PROVIDER=groq but GROQ_API_KEY is not set"
+      );
+    }
+
+    cached = require("./openai")(c);
+
   } else if (c.provider === "gemini") {
     if (!c.apiKey) {
       throw new Error(
@@ -44,7 +53,7 @@ function getProvider() {
   } else {
     throw new Error(
       `Unknown LLM_PROVIDER "${c.provider}" ` +
-      "(use ollama, gemini, anthropic, openai or mock)"
+      "(use ollama, groq, gemini, anthropic, openai or mock)"
     );
   }
 
